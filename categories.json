@@ -1,0 +1,67 @@
+{
+    "ee_zlf_low": {
+        "pt_region": "low",
+        "region": "CR_zlf"
+    },
+    "ee_zhf_low": {
+        "pt_region": "low",
+        "region": "CR_zhf"
+    },
+    "ee_tt_bar_low": {
+        "pt_region": "low",
+        "region": "CR_tt_bar"
+    },
+    "ee_signal_low": {
+        "pt_region": "low",
+        "region": "Signal"
+    },
+    "ee_zlf_high": {
+        "pt_region": "high",
+        "region": "CR_zlf"
+    },
+    "ee_zhf_high": {
+        "pt_region": "high",
+        "region": "CR_zhf"
+    },
+    "ee_tt_bar_high": {
+        "pt_region": "high",
+        "region": "CR_tt_bar"
+    },
+    "ee_signal_high": {
+        "pt_region": "high",
+        "region": "Signal"
+    },
+    "mumu_signal_low": {
+        "pt_region": "low",
+        "region": "Signal"
+    },
+    "mumu_tt_bar_low": {
+        "pt_region": "low",
+        "region": "CR_tt_bar"
+    },
+    "mumu_zhf_low": {
+        "pt_region": "low",
+        "region": "CR_zhf"
+    },
+    "mumu_zlf_low": {
+        "pt_region": "low",
+        "region": "CR_zlf"
+    },
+    "mumu_signal_high": {
+        "pt_region": "high",
+        "region": "Signal"
+    },
+    "mumu_tt_bar_high": {
+        "pt_region": "high",
+        "region": "CR_tt_bar"
+    },
+    "mumu_zhf_high": {
+        "pt_region": "high",
+        "region": "CR_zhf"
+    },
+    "mumu_zlf_high": {
+        "pt_region": "high",
+        "region": "CR_zlf"
+    }
+}
+
