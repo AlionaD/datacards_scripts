@@ -1,8 +1,9 @@
 #!/bin/bash
 
-categories=$(jq -r 'keys[]' categories.json)
+script_folder="$(dirname "$0")"
+categories=$(jq -r 'keys[]' $script_folder/categories.json)
 
-folder=/eos/user/a/adodonov/SWAN_projects/Combine/Datacards/
+folder=${3-"/eos/user/a/adodonov/SWAN_projects/Combine/Datacards/"}
 subfolder=${1-"last_day2"} 
 cardname=${2-"$subfolder"}.txt
 

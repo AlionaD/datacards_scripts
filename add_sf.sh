@@ -1,17 +1,18 @@
 #!/bin/bash
 
-categories_data=$(jq -r 'keys[]' categories.json)
+script_folder="$(dirname "$0")"
+categories_data=$(jq -r 'keys[]' $script_folder/categories.json)
 
-folder="/eos/user/a/adodonov/SWAN_projects/Combine/Datacards/"
-subfolder="${1:-last_day2}"
+folder=${2-"/eos/user/a/adodonov/SWAN_projects/Combine/Datacards/"}
+subfolder="${1:-last_day}"
 
 for category_key in $categories_data; do
-    category=$(jq -r ".\"$category_key\"" categories.json)
+    category=$(jq -r ".\"$category_key\"" $script_folder/categories.json)
     pt_region=$(echo "$category" | jq -r '.pt_region')
     region=$(echo "$category" | jq -r '.region')
 
     datacard_dir="$folder$subfolder/StatModel/$category_key/$(ls "$folder$subfolder/StatModel/$category_key")"
-    datacard_file="$datacard_dir/datacard.txt"
+    datacard_file="$datacard_dir/datacard.txt"   
 
     if [ "$pt_region" == "low" ]; then
         line1="SF_LOW_"
