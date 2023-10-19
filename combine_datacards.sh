@@ -13,7 +13,8 @@ i=1
 for category in $categories; do
   datacard_dir="$folder$subfolder/StatModel/$category/$(ls "$folder$subfolder/StatModel/$category")"
   datacard_file="$datacard_dir/datacard.txt"
-  commanda+=" Name$i=$datacard_file"
+ # commanda+=" Name$i=$datacard_file"
+  commanda+=" $category=$datacard_file"
   ((i++))
 done
 
