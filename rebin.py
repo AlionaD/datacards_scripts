@@ -15,17 +15,29 @@ def parse_arguments():
 
     return parser.parse_args()
 
-if __name__ == "__main__":
-    args = parse_arguments()
-
-    filename = args.filename
-    bin_condition = args.bin_condition
-    bin_uncert_fraction = args.bin_uncert_fraction
-
-    # Now, you can use these variables in your script.
-    print(f"Filename specified: {filename}")
-    print(f"Bin condition specified: {bin_condition}")
-    print(f"Bin uncertainty fraction specified: {bin_uncert_fraction}")
+def CreateRebin(filename, fileout, bin_condition, bin_uncert_fraction):
+    File1 = ROOT.TFile.Open( filename,"READ")
+    Fileout = ROOT.TFile.Open( fileout,"RECREATE");
+    for a in File1.GetListOfKeys():
+        if ("nominal" in a.GetName()) & ("data_obs" in a.GetName()):
+            data = File1.Get(a.GetName())
+    total_bkg = TH1F("","", data.GetNbinsX(),
+        data.GetXaxis().GetBinLowEdge(1), data.GetXaxis().GetBinLowEdge(data.GetNbinsX()+1))
+    for a in File1.GetListOfKeys():
+        if ("nominal" in a.GetName()) & ("data_obs" not in a.GetName()):
+            total_bkg.Add(File1.Get(a.GetName()))
+    nbins = total_bkg.GetNbinsX()
+    init_bins = [total_bkg.GetBinLowEdge(i) for i in range(1, nbins + 2)]
+    new_bins = FindNewBinning(total_bkg, init_bins, bin_condition, bin_uncert_fraction, 1)
+    for a in File1.GetListOfKeys():
+        h1 = File1.Get(a.GetName());
+        h2 = TH1F("","", h1.GetNbinsX(), h1.GetXaxis().GetBinLowEdge(1), h1.GetXaxis().GetBinLowEdge(h1.GetNbinsX()+1))
+        h2.Add(h1)
+        h3 = h2.Rebin(len(new_bins)-1, a.GetName(), np.array(new_bins))
+        h3.Write()
+    Fileout.Write()
+    Fileout.Close()
+    File1.Close()
 
 def get_maximum_frac_uncert_bin(total_bkg):
     idx = 1
@@ -129,3 +141,17 @@ def FindNewBinning(total_bkg, new_bins, bin_condition, bin_uncert_fraction, mode
         return new_new
     else:
         return FindNewBinning(total_bkg_new, new_bins, bin_condition, bin_uncert_fraction, mode)
+
+if __name__ == "__main__":
+    args = parse_arguments()
+
+    filename = args.filename
+    bin_condition = args.bin_condition
+    bin_uncert_fraction = args.bin_uncert_fraction
+    fileout = filename[:-12] +".root"
+    CreateRebin(filename, fileout, 1, 50)
+    print(f"Output filename : {fileout}")
+    print(f"Filename specified: {filename}")
+    print(f"Bin condition specified: {bin_condition}")
+    print(f"Bin uncertainty fraction specified: {bin_uncert_fraction}")
+
