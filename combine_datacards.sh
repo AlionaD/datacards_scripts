@@ -43,7 +43,7 @@ for category in $categories; do
   if [ ! -e "$shapes_file" ]; then
     mv "$datacard_dir/shapes.root" "$shapes_file"
   fi
-  python3 $script_folder/rebin.py --filename $shapes_file --bin_condition 3 --bin_uncert_fraction 100
+  python3 $script_folder/rebin.py --filename $shapes_file --bin_condition 5 --bin_uncert_fraction 10
   commanda+=" $category=$datacard_file"
   ((i++))
 done
@@ -52,4 +52,4 @@ echo "$commanda"
 
 combineCards.py $commanda > "$cardname"
 ulimit -s unlimited
-text2workspace.py $cardname -o $wsname
+text2workspace.py $cardname -o $wsname --channel-masks
