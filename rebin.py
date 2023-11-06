@@ -29,6 +29,7 @@ def CreateRebin(filename, fileout, bin_condition, bin_uncert_fraction):
     nbins = total_bkg.GetNbinsX()
     init_bins = [total_bkg.GetBinLowEdge(i) for i in range(1, nbins + 2)]
     new_bins = FindNewBinning(total_bkg, init_bins, bin_condition, bin_uncert_fraction, 1)
+    print(new_bins)
     for a in File1.GetListOfKeys():
         h1 = File1.Get(a.GetName());
         h2 = TH1F("","", h1.GetNbinsX(), h1.GetXaxis().GetBinLowEdge(1), h1.GetXaxis().GetBinLowEdge(h1.GetNbinsX()+1))
@@ -95,7 +96,7 @@ def FindNewBinning(total_bkg, new_bins, bin_condition, bin_uncert_fraction, mode
         
         if left_pass and not right_pass:
             print("Merging left using", left_bins - 1, "bins")
-            new_bins = [edge for i, edge in enumerate(new_bins) if i not in range(lbin_idx, lbin_idx - left_bins, -1)]
+            [new_bins.remove(total_bkg.GetBinLowEdge(i)) for i in range(lbin_idx, lbin_idx - left_bins + 1, -1)]
         elif right_pass and not left_pass:
             if v_ > 0:
                 print("Merging right using", right_bins - 1, "bins")
@@ -103,7 +104,7 @@ def FindNewBinning(total_bkg, new_bins, bin_condition, bin_uncert_fraction, mode
         elif left_pass and right_pass and left_bins < right_bins:
             if v_ > 0:
                 print("Merging left using", left_bins - 1, "bins")
-            new_bins = [edge for i, edge in enumerate(new_bins) if i not in range(lbin_idx, lbin_idx - left_bins, -1)]
+            [new_bins.remove(total_bkg.GetBinLowEdge(i)) for i in range(lbin_idx, lbin_idx - left_bins + 1, -1)]
         elif left_pass and right_pass and left_bins > right_bins:
             if v_ > 0:
                 print("Merging right using", right_bins - 1, "bins")
@@ -115,7 +116,7 @@ def FindNewBinning(total_bkg, new_bins, bin_condition, bin_uncert_fraction, mode
         elif left_pass and right_pass and left_bins == right_bins and lbin_idx > hbin_idx:
             if v_ > 0:
                 print("Merging left using", left_bins - 1, "bins")
-            new_bins = [edge for i, edge in enumerate(new_bins) if i not in range(lbin_idx, lbin_idx - left_bins, -1)]
+            [new_bins.remove(total_bkg.GetBinLowEdge(i)) for i in range(lbin_idx, lbin_idx - left_bins + 1, -1)]
         elif not left_pass and not right_pass:
             print("WARNING: No solution found to satisfy condition, try merging all bins")
             new_bins = []
@@ -131,9 +132,9 @@ def FindNewBinning(total_bkg, new_bins, bin_condition, bin_uncert_fraction, mode
             print()
         if v_ > 0:
             print("[AutoRebin::FindNewBinning] New binning found:")
-        for i in range(1, nbins_new + 2):
+        for i in range(1, nbins_new + 1):
             if v_ > 0:
-                print("Bin index:", i, ", BinLowEdge:", new_bins[i - 1], ", Bin content:", total_bkg.GetBinContent(i), ", Bin error fraction:", total_bkg.GetBinError(i)/ total_bkg.GetBinContent(i))
+                print("Bin index:", i, ", BinLowEdge:", new_bins[i - 1], ", Bin content:", total_bkg_new.GetBinContent(i), ", Bin error fraction:", total_bkg_new.GetBinError(i)/ total_bkg_new.GetBinContent(i))
             if (total_bkg_new.GetBinContent(i) <= bin_condition or total_bkg_new.GetBinError(i) / total_bkg_new.GetBinContent(i) >= bin_uncert_fraction) and i != nbins_new + 1:
                 all_bins = False
 
@@ -149,7 +150,7 @@ if __name__ == "__main__":
     bin_condition = args.bin_condition
     bin_uncert_fraction = args.bin_uncert_fraction
     fileout = filename[:-12] +".root"
-    CreateRebin(filename, fileout, 1, 50)
+    CreateRebin(filename, fileout, bin_condition, bin_uncert_fraction)
     print(f"Output filename : {fileout}")
     print(f"Filename specified: {filename}")
     print(f"Bin condition specified: {bin_condition}")
